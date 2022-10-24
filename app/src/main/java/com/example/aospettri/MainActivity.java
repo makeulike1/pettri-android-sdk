@@ -2,6 +2,9 @@ package com.example.aospettri;
 
 import android.os.Bundle;
 
+import com.example.aospettri.room.AppDatabase;
+import com.example.aospettri.room.Appdata;
+import com.example.aospettri.room.AppdataDao;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,10 +19,10 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.aospettri.databinding.ActivityMainBinding;
 
-import android.net.Uri;
+import androidx.room.Room;
+
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
         System.out.println("haha");
 
+
+
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -47,12 +53,14 @@ public class MainActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
+
+
+
+        // 딥링크 인텐트를 통해서 가지고 온 클릭키 및 파라미터를 추출
         Intent intent = getIntent();
         String action = intent.getAction();
 
-
-
-        if(action == Intent.ACTION_VIEW){
+        if(action.equals(Intent.ACTION_VIEW)){
             System.out.println(intent.getData().getQueryParameter("key1"));
             System.out.println(intent.getData().getQueryParameter("key2"));
             System.out.println(intent.getData().getQueryParameter("click_key"));
@@ -60,6 +68,18 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        // 앱 데이터베이스 초기화 및 앱에 저장되어 있는 클릭키를 가지고 옴
+        /*
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "test").build();
+
+        AppdataDao appdataDao = db.appdataDao();
+        String ck = appdataDao.findCK();
+
+
+        System.out.println(ck);
+
+         */
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
