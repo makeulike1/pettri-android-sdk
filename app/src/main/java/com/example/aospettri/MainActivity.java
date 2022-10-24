@@ -24,6 +24,9 @@ import androidx.room.Room;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -39,9 +42,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        System.out.println("haha");
-
-
 
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -55,31 +55,40 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
         // 딥링크 인텐트를 통해서 가지고 온 클릭키 및 파라미터를 추출
         Intent intent = getIntent();
-        String action = intent.getAction();
-
-        if(action.equals(Intent.ACTION_VIEW)){
-            System.out.println(intent.getData().getQueryParameter("key1"));
-            System.out.println(intent.getData().getQueryParameter("key2"));
-            System.out.println(intent.getData().getQueryParameter("click_key"));
-        }
 
 
 
-        // 앱 데이터베이스 초기화 및 앱에 저장되어 있는 클릭키를 가지고 옴
-        /*
-        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "test").build();
+        // [스레드 1] : Room 데이터베이스 초기화 및 CRUD
+        Thread thread1 =  new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        checkCK(intent);
+                    }
+        });
 
-        AppdataDao appdataDao = db.appdataDao();
-        String ck = appdataDao.findCK();
+        thread1.start();
 
 
-        System.out.println(ck);
 
-         */
+        // [스레드 2] : 페트리 서버로 페이지 방문 이벤트 넘겨줌
+        Thread thread2 = new Thread(
+            new Runnable() {
+                @Override
+                public void run() {
+                    List<ReqProp> propList = new ArrayList<ReqProp>();
+                    //RestApi.callEventCreate("abc","hi", propList);
+                }
+        });
+
+
+        thread2.start();
+
+
+
+
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,6 +98,46 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
+
+
+    public void checkCK(Intent intent){
+        String action = intent.getAction();
+
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "test").build();
+
+        AppdataDao appdataDao = db.appdataDao();
+
+        // 앱 데이터베이스 초기화 및 앱에 저장되어 있는 클릭키를 가지고 옴
+        String isCK = appdataDao.findCK();
+
+
+        appdataDao.delete();
+
+
+        // 클릭키가 없으면 신규로 전달받은 클릭키를 Room DB에 저장.
+        if (isCK == null) {
+            if (action.equals(Intent.ACTION_VIEW)) {
+                String CLICK_KEY = intent.getData().getQueryParameter("click_key");
+
+                if (CLICK_KEY != null) {
+                    Appdata ap = new Appdata(1, CLICK_KEY);
+                    appdataDao.insert(ap);
+                    System.out.println("*** Click key " + CLICK_KEY + " is successfully saved into Room DB.");
+
+
+                    // 최초 실행(인스톨)에 대해서 인스톨 로그를 남김.
+                    List<ReqProp> propList = new ArrayList<ReqProp>();
+                    RestApi.callInstallCreate(CLICK_KEY, propList);
+                }
+            }
+
+        } else System.out.println("*** Getting saved click key from Room DB : " + isCK);
+
+        db.close();
+    }
 
 
 

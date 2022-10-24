@@ -9,5 +9,11 @@ public interface AppdataDao {
 
     @Query("select ck from appdata where id=1")
     String findCK();
+
+    @Insert
+    public void insert(Appdata appData);
+
+    @Query("delete from appdata where id=1")
+    public void delete();
 }
 
