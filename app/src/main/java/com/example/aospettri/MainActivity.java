@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.content.Intent;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -25,7 +26,8 @@ import androidx.room.Room;
 
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,33 +55,8 @@ public class MainActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-
-
-        // 페트리 SDK 초기화
+         // 페트리 SDK 초기화
         initPettri();
-
-
-        // 로그인 버튼 누르면 로그인 이벤트 서버로 전송
-        Button button1 = (Button) findViewById(R.id.button_first);
-        button1.setOnClickListener(new Button.OnClickListener(){
-
-            @Override
-            public void onClick(View view){
-                List<ReqProp> propList = new ArrayList<ReqProp>();
-                EventLoggingThread thread = new EventLoggingThread("login", "", propList);
-                thread.start();
-            }
-
-        });
 
     }
 
@@ -117,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 String isCK = appdataDao.findCK();
 
 
-                // appdataDao.delete();
+                //appdataDao.delete();
 
 
                 // 클릭키가 없으면 신규로 전달받은 클릭키를 Room DB에 저장.
@@ -132,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                             // 최초 실행(인스톨)에 대해서 인스톨 로그를 남김.
-                            List<ReqProp> propList = new ArrayList<ReqProp>();
+                            JSONArray propList = new JSONArray();
                             InstallLoggingThread thread = new InstallLoggingThread(CLICK_KEY, propList);
                             thread.start();
                         }
@@ -143,7 +120,9 @@ public class MainActivity extends AppCompatActivity {
                 db.close();
             }
         });
-  
+
+        th.start();
+
     }
 
 

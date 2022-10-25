@@ -12,19 +12,21 @@ import java.util.List;
 
 public class RestApi {
 
-    private static String serverURL             = "http://test.adrunner.co.kr:8083";
+    private static String serverURL                     = "http://test.adrunner.co.kr:8083";
 
-    private static String eventAPIPath          = "/event/create";
+    private static String createEventAPIPath            = "/event/create";
 
-    private static String installAPIPath        = "/install/create";
+    private static String createInstallAPIPath          = "/install/create";
 
-    private static String bundleId              = "com.android.pettri";
+    private static String createUserAPIPath             = "/user/create";
+
+    private static String bundleId                      = "com.android.pettri";
 
 
 
     // 이벤트 로그 생성
     public static void callEventCreate(
-            String userId, String name, List<ReqProp> propList){
+            String userId, String name, JSONArray propList){
 
         // 서버로 전달할 JSON 객체 생성
         JSONObject requestObject = new JSONObject();
@@ -33,19 +35,19 @@ public class RestApi {
             requestObject.put("bundleId",   bundleId);
             requestObject.put("userId",     userId);
             requestObject.put("name",       name);
-            requestObject.put("prop",    new JSONArray(propList));
+            requestObject.put("prop",       propList);
         }catch(Exception e){
             e.printStackTrace();
         }
 
-        sendPost(requestObject, eventAPIPath);
+        sendPost(requestObject, createEventAPIPath);
     }
 
 
 
 
     // 최초 인스톨시 인스톨에 대한 로그 갱신
-    public static void callInstallCreate(String ck,  List<ReqProp> propList){
+    public static void callInstallCreate(String ck,  JSONArray propList){
 
         // 서버로 전달할 JSON 객체 생성
         JSONObject requestObject = new JSONObject();
@@ -53,14 +55,36 @@ public class RestApi {
         try {
             requestObject.put("bundleId",       bundleId);
             requestObject.put("clickKey",       ck);
-            requestObject.put("prop",           new JSONArray(propList));
+            requestObject.put("prop",           propList);
         }catch(Exception e){
             e.printStackTrace();
         }
 
-        sendPost(requestObject, installAPIPath);
+        sendPost(requestObject, createInstallAPIPath);
     }
 
+
+
+
+    // 최초 회원가입시 회원가입에 대한 로그 갱신
+    public static void callUserCreate(String userId, JSONArray propList){
+
+        // 서버로 전달할 JSON 객체 생성
+        JSONObject requestObject = new JSONObject();
+
+
+        try{
+
+            requestObject.put("bundleId",   bundleId);
+            requestObject.put("userId",     userId);
+            requestObject.put("prop",       propList);
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        sendPost(requestObject, createUserAPIPath);
+    }
 
 
 
