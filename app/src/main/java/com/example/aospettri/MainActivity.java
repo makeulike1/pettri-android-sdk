@@ -5,6 +5,8 @@ import android.os.Bundle;
 import com.example.aospettri.room.AppDatabase;
 import com.example.aospettri.room.Appdata;
 import com.example.aospettri.room.AppdataDao;
+import com.example.aospettri.thread.EventLoggingThread;
+import com.example.aospettri.thread.InstallLoggingThread;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +25,7 @@ import androidx.room.Room;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,53 +43,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-
-
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         setSupportActionBar(binding.toolbar);
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
-
-
-        // 딥링크 인텐트를 통해서 가지고 온 클릭키 및 파라미터를 추출
-        Intent intent = getIntent();
-
-
-
-        // [스레드 1] : Room 데이터베이스 초기화 및 CRUD
-        Thread thread1 =  new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        checkCK(intent);
-                    }
-        });
-
-        thread1.start();
-
-
-
-        // [스레드 2] : 페트리 서버로 페이지 방문 이벤트 넘겨줌
-        Thread thread2 = new Thread(
-            new Runnable() {
-                @Override
-                public void run() {
-                    List<ReqProp> propList = new ArrayList<ReqProp>();
-                    //RestApi.callEventCreate("abc","hi", propList);
-                }
-        });
-
-
-        thread2.start();
-
-
 
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
@@ -96,49 +61,90 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-    }
 
 
 
+        // 페트리 SDK 초기화
+        initPettri();
 
 
-    public void checkCK(Intent intent){
-        String action = intent.getAction();
+        // 로그인 버튼 누르면 로그인 이벤트 서버로 전송
+        Button button1 = (Button) findViewById(R.id.button_first);
+        button1.setOnClickListener(new Button.OnClickListener(){
 
-        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "test").build();
-
-        AppdataDao appdataDao = db.appdataDao();
-
-        // 앱 데이터베이스 초기화 및 앱에 저장되어 있는 클릭키를 가지고 옴
-        String isCK = appdataDao.findCK();
-
-
-        appdataDao.delete();
-
-
-        // 클릭키가 없으면 신규로 전달받은 클릭키를 Room DB에 저장.
-        if (isCK == null) {
-            if (action.equals(Intent.ACTION_VIEW)) {
-                String CLICK_KEY = intent.getData().getQueryParameter("click_key");
-
-                if (CLICK_KEY != null) {
-                    Appdata ap = new Appdata(1, CLICK_KEY);
-                    appdataDao.insert(ap);
-                    System.out.println("*** Click key " + CLICK_KEY + " is successfully saved into Room DB.");
-
-
-                    // 최초 실행(인스톨)에 대해서 인스톨 로그를 남김.
-                    List<ReqProp> propList = new ArrayList<ReqProp>();
-                    RestApi.callInstallCreate(CLICK_KEY, propList);
-                }
+            @Override
+            public void onClick(View view){
+                List<ReqProp> propList = new ArrayList<ReqProp>();
+                EventLoggingThread thread = new EventLoggingThread("login", "", propList);
+                thread.start();
             }
 
-        } else System.out.println("*** Getting saved click key from Room DB : " + isCK);
+        });
 
-        db.close();
     }
 
+
+
+
+    // 페트리 SDK 초기화
+    public void initPettri(){
+
+        // Room 데이터베이스 초기화 및 CRUD
+        checkCK();
+    }
+
+
+
+
+
+
+    public void checkCK(){
+
+        Intent intent = getIntent();
+
+        String action = getIntent().getAction();
+
+        Thread th = new Thread(new Runnable(){
+
+            @Override
+            public void run(){
+                AppDatabase db = Room.databaseBuilder(getApplicationContext(),
+                        AppDatabase.class, "test").build();
+
+                AppdataDao appdataDao = db.appdataDao();
+
+                // 앱 데이터베이스 초기화 및 앱에 저장되어 있는 클릭키를 가지고 옴
+                String isCK = appdataDao.findCK();
+
+
+                // appdataDao.delete();
+
+
+                // 클릭키가 없으면 신규로 전달받은 클릭키를 Room DB에 저장.
+                if (isCK == null) {
+                    if (action.equals(Intent.ACTION_VIEW)) {
+                        String CLICK_KEY = intent.getData().getQueryParameter("click_key");
+
+                        if (CLICK_KEY != null) {
+                            Appdata ap = new Appdata(1, CLICK_KEY);
+                            appdataDao.insert(ap);
+                            System.out.println("*** Click key " + CLICK_KEY + " is successfully saved into Room DB.");
+
+
+                            // 최초 실행(인스톨)에 대해서 인스톨 로그를 남김.
+                            List<ReqProp> propList = new ArrayList<ReqProp>();
+                            InstallLoggingThread thread = new InstallLoggingThread(CLICK_KEY, propList);
+                            thread.start();
+                        }
+                    }
+
+                } else System.out.println("*** Getting saved click key from Room DB : " + isCK);
+
+                db.close();
+            }
+        });
+  
+    }
 
 
 
@@ -175,8 +181,5 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
-
-
 
 }

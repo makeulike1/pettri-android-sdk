@@ -22,6 +22,12 @@ public class ReqProp {
         this.value = value;
     }
 
+
+    public ReqProp(String key, String vallue){
+        this.key = key;
+        this.value = value;
+    }
+
     @Override
     public String toString() {
         return "ReqEventCreate{" +
