@@ -10,12 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.aospettri.AppConfig;
 import com.example.aospettri.LoginUser;
 import com.example.aospettri.R;
+import com.example.aospettri.Utils;
 import com.example.aospettri.databinding.FragmentFirstBinding;
 import com.example.aospettri.thread.EventLoggingThread;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FirstFragment extends Fragment {
 
@@ -37,34 +41,37 @@ public class FirstFragment extends Fragment {
 
 
         // 로그인 버튼 누르면 로그인 이벤트 서버로 전송, 로그인 화면 오픈
-        binding.buttonLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        binding.buttonLogin.setOnClickListener(view1 -> {
 
-                EditText text = (EditText)getView().findViewById(R.id.textbox_signup);
+            EditText text = getView().findViewById(R.id.textbox_signup);
+            String userId = text.getText().toString();
 
-                String userId = text.getText().toString();
+            LoginUser.userId = userId;
+            String ip = Utils.getIPAddress(true); // IPv4
+            JSONArray propList = new JSONArray();
 
-                LoginUser.userId = userId;
+            try {
 
-                JSONArray propList = new JSONArray();
-                EventLoggingThread thread = new EventLoggingThread("login", userId, propList);
-                thread.start();
+                JSONObject prop1 = new JSONObject();
+                prop1.put("key", "ip");
+                prop1.put("value", ip);
+                propList.put(prop1);
 
-                NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment);
+            }catch(JSONException e){
+                e.printStackTrace();
             }
+
+            EventLoggingThread thread = new EventLoggingThread(AppConfig.ck, "login", userId, propList);
+            thread.start();
+
+            NavHostFragment.findNavController(FirstFragment.this)
+                    .navigate(R.id.action_FirstFragment_to_SecondFragment);
         });
 
         // 로그인 버튼 누르면 로그인 이벤트 서버로 전송, 회원 가입 화면 오픈
-        binding.buttonSignup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
+        binding.buttonSignup.setOnClickListener(view2 ->
                 NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_ThirdFragment);
-            }
-        });
+                .navigate(R.id.action_FirstFragment_to_ThirdFragment));
 
     }
 

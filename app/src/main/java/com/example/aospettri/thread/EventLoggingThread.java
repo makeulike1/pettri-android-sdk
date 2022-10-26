@@ -9,22 +9,25 @@ import java.util.List;
 
 public class EventLoggingThread  extends  Thread{
 
-    private String eventName;
+    private String  ck;
 
-    private String userId;
+    private String  eventName;
+
+    private String  userId;
 
     private JSONArray propList;
 
 
-    public EventLoggingThread(String eventName, String userId, JSONArray propList){
+    public EventLoggingThread(String ck, String eventName, String userId, JSONArray propList){
         this.eventName = eventName;
         this.userId = userId;
         this.propList = propList;
+        this.ck = ck;
     }
 
     @Override
     public void run(){
-        RestApi.callEventCreate(userId, eventName, propList);
+        RestApi.callEventCreate(ck, userId, eventName, propList);
     }
 
 }

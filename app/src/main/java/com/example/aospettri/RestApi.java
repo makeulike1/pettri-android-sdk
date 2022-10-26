@@ -20,22 +20,20 @@ public class RestApi {
 
     private static String createUserAPIPath             = "/user/create";
 
-    private static String bundleId                      = "com.android.pettri";
-
-
 
     // 이벤트 로그 생성
     public static void callEventCreate(
-            String userId, String name, JSONArray propList){
+            String ck, String userId, String name, JSONArray propList){
 
         // 서버로 전달할 JSON 객체 생성
         JSONObject requestObject = new JSONObject();
 
         try {
-            requestObject.put("bundleId",   bundleId);
-            requestObject.put("userId",     userId);
-            requestObject.put("name",       name);
-            requestObject.put("prop",       propList);
+            requestObject.put("ck", ck);
+            requestObject.put("trackingId",   AppConfig.trkId);
+            requestObject.put("userId",       userId);
+            requestObject.put("name",         name);
+            requestObject.put("prop",         propList);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -53,8 +51,8 @@ public class RestApi {
         JSONObject requestObject = new JSONObject();
 
         try {
-            requestObject.put("bundleId",       bundleId);
-            requestObject.put("clickKey",       ck);
+            requestObject.put("trackingId",     AppConfig.trkId);
+            requestObject.put("ck",             ck);
             requestObject.put("prop",           propList);
         }catch(Exception e){
             e.printStackTrace();
@@ -67,17 +65,17 @@ public class RestApi {
 
 
     // 최초 회원가입시 회원가입에 대한 로그 갱신
-    public static void callUserCreate(String userId, JSONArray propList){
+    public static void callUserCreate(String ck, String userId, JSONArray propList){
 
         // 서버로 전달할 JSON 객체 생성
         JSONObject requestObject = new JSONObject();
 
 
         try{
-
-            requestObject.put("bundleId",   bundleId);
-            requestObject.put("userId",     userId);
-            requestObject.put("prop",       propList);
+            requestObject.put("ck", ck);
+            requestObject.put("trackingId",     AppConfig.trkId);
+            requestObject.put("userId",         userId);
+            requestObject.put("prop",           propList);
 
         }catch(Exception e){
             e.printStackTrace();

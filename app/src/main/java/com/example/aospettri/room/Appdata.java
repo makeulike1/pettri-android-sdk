@@ -13,6 +13,9 @@ public class Appdata {
     @ColumnInfo(name = "ck")
     public String ck;
 
+    @ColumnInfo(name = "trkId")
+    public String trkId;
+
     public int getId() {
         return id;
     }
@@ -21,17 +24,10 @@ public class Appdata {
         this.id = id;
     }
 
-    public String getCk() {
-        return ck;
-    }
-
-    public void setCk(String ck) {
-        this.ck = ck;
-    }
-
-    public Appdata(Integer id, String ck){
+    public Appdata(Integer id, String ck, String trkId){
         this.id = id;
         this.ck = ck;
+        this.trkId = trkId;
     }
 
     @Override

@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.aospettri.AppConfig;
 import com.example.aospettri.LoginUser;
 import com.example.aospettri.R;
 import com.example.aospettri.databinding.FragmentSecondBinding;
@@ -38,7 +39,7 @@ public class SecondFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 JSONArray propList = new JSONArray();
-                EventLoggingThread thread = new EventLoggingThread("logout", LoginUser.userId, propList);
+                EventLoggingThread thread = new EventLoggingThread(AppConfig.ck, "logout", LoginUser.userId, propList);
                 thread.start();
 
                 LoginUser.userId = "";

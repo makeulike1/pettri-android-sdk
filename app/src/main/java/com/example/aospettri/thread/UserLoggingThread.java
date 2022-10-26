@@ -9,17 +9,20 @@ import java.util.List;
 
 public class UserLoggingThread  extends  Thread{
 
+    private String ck;
+
     private String userId;
 
     private JSONArray propList;
 
-    public UserLoggingThread(String userId, JSONArray propList){
+    public UserLoggingThread(String ck, String userId, JSONArray propList){
+        this.ck = ck;
         this.userId = userId;
         this.propList = propList;
     }
 
     @Override
     public void run(){
-        RestApi.callUserCreate(userId, propList);
+        RestApi.callUserCreate(ck, userId, propList);
     }
 }

@@ -10,6 +10,9 @@ public interface AppdataDao {
     @Query("select ck from appdata where id=1")
     String findCK();
 
+    @Query("select trkId from appdata where id=1")
+    String findTrkId();
+
     @Insert
     public void insert(Appdata appData);
 
