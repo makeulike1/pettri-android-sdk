@@ -1,12 +1,12 @@
-package com.example.aospettri;
+package com.example.aospettri.network.object;
 
-public class ReqProp {
+public class Prop {
 
     private String  key;
 
     private String  value;
 
-    public ReqProp(String key, String value){
+    public Prop(String key, String value){
         this.key = key;
         this.value = value;
     }
@@ -18,6 +18,5 @@ public class ReqProp {
                 ", value='" + value + '\'' +
                 '}';
     }
+
 }
-
-

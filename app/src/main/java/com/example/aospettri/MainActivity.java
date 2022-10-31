@@ -54,31 +54,28 @@ public class MainActivity extends AppCompatActivity {
         appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
 
-         // 페트리 SDK 초기화
-        initPettri();
-
-    }
-
-
-
-
-    // 페트리 SDK 초기화
-    public void initPettri(){
-
-        // Room 데이터베이스 초기화 및 CRUD
-        checkCK();
-    }
-
-
-
-
-
-
-    public void checkCK(){
-
         Intent intent = getIntent();
 
         String action = getIntent().getAction();
+
+        if (action.equals(Intent.ACTION_VIEW)) {
+            String CLICK_KEY =      intent.getData().getQueryParameter("click_key");
+            String TRACKING_ID =    intent.getData().getQueryParameter("trkId");
+            String APP_KEY =        intent.getData().getQueryParameter("appKey");
+
+            // 페트리 SDK 초기화
+            initPettri(CLICK_KEY, TRACKING_ID);
+
+        }
+
+
+    }
+
+
+
+
+
+    public void initPettri(String CLICK_KEY, String TRACKING_ID){
 
         Thread th = new Thread(new Runnable(){
 
@@ -92,18 +89,14 @@ public class MainActivity extends AppCompatActivity {
                 // 앱 데이터베이스 초기화 및 앱에 저장되어 있는 클릭키를 가지고 옴
                 String isCK = appdataDao.findCK();
 
-                String trackingId = appdataDao.findTrkId();
+                String isTrkID = appdataDao.findTrkId();
 
                 //appdataDao.delete();
 
 
-                // 클릭키가 없으면 신규로 전달받은 클릭키를 Room DB에 저장.
                 if (isCK == null) {
-                    if (action.equals(Intent.ACTION_VIEW)) {
-                        String CLICK_KEY = intent.getData().getQueryParameter("click_key");
-                        String TRACKING_ID = intent.getData().getQueryParameter("trkId");
-                        // String APP_KEY = intent.getData().getQueryParameter("appKey");
 
+                        // String APP_KEY = intent.getData().getQueryParameter("appKey");
 
                         if ((CLICK_KEY != null) && (TRACKING_ID != null)){
                             Appdata ap = new Appdata(1, CLICK_KEY, TRACKING_ID);
@@ -133,14 +126,12 @@ public class MainActivity extends AppCompatActivity {
                             AppConfig.ck = CLICK_KEY;
                         }
 
-                    }
-
                 } else {
                     System.out.println("*** Getting saved click key from Room DB : " + isCK);
-                    System.out.println("*** Getting saved tracking id from Room DB : " + trackingId);
+                    System.out.println("*** Getting saved tracking id from Room DB : " + isTrkID);
 
                     AppConfig.ck = isCK;
-                    AppConfig.trkId = trackingId;
+                    AppConfig.trkId = isTrkID;
                 }
 
                 db.close();
