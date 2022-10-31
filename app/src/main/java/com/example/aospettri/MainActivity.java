@@ -6,6 +6,7 @@ import com.example.aospettri.network.IPConfig;
 import com.example.aospettri.room.AppDatabase;
 import com.example.aospettri.room.Appdata;
 import com.example.aospettri.room.AppdataDao;
+import com.example.aospettri.settings.Pettri;
 import com.example.aospettri.thread.WriteInstall;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -63,85 +64,11 @@ public class MainActivity extends AppCompatActivity {
             String TRACKING_ID =    intent.getData().getQueryParameter("trkId");
             String APP_KEY =        intent.getData().getQueryParameter("appKey");
 
-            // 페트리 SDK 초기화
-            initPettri(CLICK_KEY, TRACKING_ID);
-
+            Pettri.init(CLICK_KEY, TRACKING_ID, getApplicationContext());
         }
 
 
     }
-
-
-
-
-
-    public void initPettri(String CLICK_KEY, String TRACKING_ID){
-
-        Thread th = new Thread(new Runnable(){
-
-            @Override
-            public void run(){
-                AppDatabase db = Room.databaseBuilder(getApplicationContext(),
-                        AppDatabase.class, "test").build();
-
-                AppdataDao appdataDao = db.appdataDao();
-
-                // 앱 데이터베이스 초기화 및 앱에 저장되어 있는 클릭키를 가지고 옴
-                String isCK = appdataDao.findCK();
-
-                String isTrkID = appdataDao.findTrkId();
-
-                //appdataDao.delete();
-
-
-                if (isCK == null) {
-
-                        // String APP_KEY = intent.getData().getQueryParameter("appKey");
-
-                        if ((CLICK_KEY != null) && (TRACKING_ID != null)){
-                            Appdata ap = new Appdata(1, CLICK_KEY, TRACKING_ID);
-                            appdataDao.insert(ap);
-                            System.out.println("*** Click key " + CLICK_KEY + " is successfully saved into Room DB.");
-
-
-                            // 최초 실행(인스톨)에 대해서 인스톨 로그를 남김.
-                            JSONArray propList = new JSONArray();
-                            String ip = IPConfig.getIPAddress(true); // IPv4
-
-                            try {
-
-                                JSONObject prop1 = new JSONObject();
-                                prop1.put("key", "ip");
-                                prop1.put("value", ip);
-                                propList.put(prop1);
-
-                            }catch(JSONException e){
-                                e.printStackTrace();
-                            }
-
-                            WriteInstall thread = new WriteInstall(CLICK_KEY, propList);
-                            thread.start();
-
-                            AppConfig.trkId = TRACKING_ID;
-                            AppConfig.ck = CLICK_KEY;
-                        }
-
-                } else {
-                    System.out.println("*** Getting saved click key from Room DB : " + isCK);
-                    System.out.println("*** Getting saved tracking id from Room DB : " + isTrkID);
-
-                    AppConfig.ck = isCK;
-                    AppConfig.trkId = isTrkID;
-                }
-
-                db.close();
-            }
-        });
-
-        th.start();
-
-    }
-
 
 
     @Override
