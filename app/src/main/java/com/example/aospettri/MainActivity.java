@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             String TRACKING_ID =    intent.getData().getQueryParameter("trkId");
             String APP_KEY =        intent.getData().getQueryParameter("appKey");
 
-            Pettri.init(CLICK_KEY, TRACKING_ID, getApplicationContext());
+            Pettri.init(CLICK_KEY,      TRACKING_ID,    getApplicationContext());
         }
 
 
