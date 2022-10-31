@@ -13,7 +13,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.aospettri.AppConfig;
 import com.example.aospettri.R;
 import com.example.aospettri.databinding.FragmentThirdBinding;
-import com.example.aospettri.thread.UserLoggingThread;
+import com.example.aospettri.thread.WriteUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,7 +65,7 @@ public class ThirdFragment extends Fragment {
                 propList.put(prop1);
                 propList.put(prop2);
 
-                UserLoggingThread thread = new UserLoggingThread(AppConfig.ck, userId, propList);
+                WriteUser thread = new WriteUser(AppConfig.ck, userId, propList);
                 thread.start();
 
                 NavHostFragment.findNavController(ThirdFragment.this)

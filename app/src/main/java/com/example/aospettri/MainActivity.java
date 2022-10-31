@@ -2,11 +2,11 @@ package com.example.aospettri;
 
 import android.os.Bundle;
 
+import com.example.aospettri.network.IPConfig;
 import com.example.aospettri.room.AppDatabase;
 import com.example.aospettri.room.Appdata;
 import com.example.aospettri.room.AppdataDao;
-import com.example.aospettri.thread.EventLoggingThread;
-import com.example.aospettri.thread.InstallLoggingThread;
+import com.example.aospettri.thread.WriteInstall;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,9 +30,6 @@ import android.view.MenuItem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -116,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
                             // 최초 실행(인스톨)에 대해서 인스톨 로그를 남김.
                             JSONArray propList = new JSONArray();
-                            String ip = Utils.getIPAddress(true); // IPv4
+                            String ip = IPConfig.getIPAddress(true); // IPv4
 
                             try {
 
@@ -129,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            InstallLoggingThread thread = new InstallLoggingThread(CLICK_KEY, propList);
+                            WriteInstall thread = new WriteInstall(CLICK_KEY, propList);
                             thread.start();
 
                             AppConfig.trkId = TRACKING_ID;

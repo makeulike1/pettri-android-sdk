@@ -1,18 +1,15 @@
 package com.example.aospettri.thread;
 
-import com.example.aospettri.ReqProp;
-import com.example.aospettri.RestApi;
+import com.example.aospettri.network.RestApi;
 
 import org.json.JSONArray;
 
-import java.util.List;
-
-public class InstallLoggingThread  extends  Thread{
+public class WriteInstall  extends  Thread{
     private String ck;
 
     private JSONArray propList;
 
-    public InstallLoggingThread(String ck, JSONArray propList){
+    public WriteInstall(String ck, JSONArray propList){
         this.ck = ck;
         this.propList = propList;
     }

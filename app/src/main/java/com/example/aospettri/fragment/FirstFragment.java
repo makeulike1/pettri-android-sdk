@@ -13,9 +13,9 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.aospettri.AppConfig;
 import com.example.aospettri.LoginUser;
 import com.example.aospettri.R;
-import com.example.aospettri.Utils;
+import com.example.aospettri.network.IPConfig;
 import com.example.aospettri.databinding.FragmentFirstBinding;
-import com.example.aospettri.thread.EventLoggingThread;
+import com.example.aospettri.thread.WriteEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,14 +40,13 @@ public class FirstFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        // 로그인 버튼 누르면 로그인 이벤트 서버로 전송, 로그인 화면 오픈
         binding.buttonLogin.setOnClickListener(view1 -> {
 
             EditText text = getView().findViewById(R.id.textbox_signup);
             String userId = text.getText().toString();
 
             LoginUser.userId = userId;
-            String ip = Utils.getIPAddress(true); // IPv4
+            String ip = IPConfig.getIPAddress(true); // IPv4
             JSONArray propList = new JSONArray();
 
             try {
@@ -61,14 +60,13 @@ public class FirstFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            EventLoggingThread thread = new EventLoggingThread(AppConfig.ck, "login", userId, propList);
+            WriteEvent thread = new WriteEvent(AppConfig.ck, "login", userId, propList);
             thread.start();
 
             NavHostFragment.findNavController(FirstFragment.this)
                     .navigate(R.id.action_FirstFragment_to_SecondFragment);
         });
 
-        // 로그인 버튼 누르면 로그인 이벤트 서버로 전송, 회원 가입 화면 오픈
         binding.buttonSignup.setOnClickListener(view2 ->
                 NavHostFragment.findNavController(FirstFragment.this)
                 .navigate(R.id.action_FirstFragment_to_ThirdFragment));

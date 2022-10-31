@@ -1,4 +1,6 @@
-package com.example.aospettri;
+package com.example.aospettri.network;
+
+import com.example.aospettri.AppConfig;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -8,7 +10,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
+
 
 public class RestApi {
 
@@ -21,11 +23,9 @@ public class RestApi {
     private static String createUserAPIPath             = "/user/create";
 
 
-    // 이벤트 로그 생성
     public static void callEventCreate(
             String ck, String userId, String name, JSONArray propList){
 
-        // 서버로 전달할 JSON 객체 생성
         JSONObject requestObject = new JSONObject();
 
         try {
@@ -44,10 +44,8 @@ public class RestApi {
 
 
 
-    // 최초 인스톨시 인스톨에 대한 로그 갱신
     public static void callInstallCreate(String ck,  JSONArray propList){
 
-        // 서버로 전달할 JSON 객체 생성
         JSONObject requestObject = new JSONObject();
 
         try {
@@ -64,10 +62,8 @@ public class RestApi {
 
 
 
-    // 최초 회원가입시 회원가입에 대한 로그 갱신
     public static void callUserCreate(String ck, String userId, JSONArray propList){
 
-        // 서버로 전달할 JSON 객체 생성
         JSONObject requestObject = new JSONObject();
 
 

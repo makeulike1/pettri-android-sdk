@@ -1,13 +1,10 @@
 package com.example.aospettri.thread;
 
-import com.example.aospettri.ReqProp;
-import com.example.aospettri.RestApi;
+import com.example.aospettri.network.RestApi;
 
 import org.json.JSONArray;
 
-import java.util.List;
-
-public class EventLoggingThread  extends  Thread{
+public class WriteEvent  extends  Thread{
 
     private String  ck;
 
@@ -18,7 +15,7 @@ public class EventLoggingThread  extends  Thread{
     private JSONArray propList;
 
 
-    public EventLoggingThread(String ck, String eventName, String userId, JSONArray propList){
+    public WriteEvent(String ck, String eventName, String userId, JSONArray propList){
         this.eventName = eventName;
         this.userId = userId;
         this.propList = propList;

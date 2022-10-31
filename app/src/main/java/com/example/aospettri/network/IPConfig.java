@@ -1,11 +1,11 @@
-package com.example.aospettri;
+package com.example.aospettri.network;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
 //import org.apache.http.conn.util.InetAddressUtils;
 
-public class Utils {
+public class IPConfig {
 
     /*
             Utils.getMACAddress("wlan0");

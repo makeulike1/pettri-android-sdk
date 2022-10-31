@@ -13,7 +13,7 @@ import com.example.aospettri.AppConfig;
 import com.example.aospettri.LoginUser;
 import com.example.aospettri.R;
 import com.example.aospettri.databinding.FragmentSecondBinding;
-import com.example.aospettri.thread.EventLoggingThread;
+import com.example.aospettri.thread.WriteEvent;
 
 import org.json.JSONArray;
 
@@ -39,7 +39,7 @@ public class SecondFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 JSONArray propList = new JSONArray();
-                EventLoggingThread thread = new EventLoggingThread(AppConfig.ck, "logout", LoginUser.userId, propList);
+                WriteEvent thread = new WriteEvent(AppConfig.ck, "logout", LoginUser.userId, propList);
                 thread.start();
 
                 LoginUser.userId = "";
