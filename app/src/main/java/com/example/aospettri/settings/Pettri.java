@@ -14,6 +14,7 @@ import com.example.aospettri.thread.WriteInstall;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.provider.Settings.Secure;
 
 public class Pettri {
 
@@ -23,6 +24,11 @@ public class Pettri {
 
             @Override
             public void run(){
+
+                String androidID = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+
+                System.out.println("*** Android ID : " + androidID);
+
 
                 AppDatabase db = Room.databaseBuilder(context, AppDatabase.class, "test").build();
                 AppdataDao appdataDao = db.appdataDao();
@@ -37,7 +43,7 @@ public class Pettri {
                         appdataDao.insert(ap);
                         System.out.println("*** Click key " + ck + " is successfully saved into Room DB.");
 
-                        JSONArray propList = getInstallProp();
+                        JSONArray propList = getInstallProp(androidID);
                         WriteInstall thread = new WriteInstall(ck, propList);
                         thread.start();
 
@@ -69,7 +75,7 @@ public class Pettri {
 
 
 
-    public static JSONArray getInstallProp(){
+    public static JSONArray getInstallProp(String androidID){
         JSONArray propList = new JSONArray();
         String ip = IPConfig.getIPAddress(true); // IPv4
 
@@ -79,6 +85,11 @@ public class Pettri {
             prop1.put("key", "ip");
             prop1.put("value", ip);
             propList.put(prop1);
+
+            JSONObject prop2 = new JSONObject();
+            prop2.put("key", "android_id");
+            prop2.put("value", androidID);
+            propList.put(prop2);
 
         }catch(JSONException e){
             e.printStackTrace();
