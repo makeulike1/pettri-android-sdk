@@ -26,6 +26,8 @@ public class RestApi {
     public static String checkReInstall                = "/re-install/check-rei";
 
 
+
+    /*** Send HTTP GET Request to Attribution. ***/
     public static Response sendGet(String path){
 
         String responseMessage = "";
@@ -69,6 +71,8 @@ public class RestApi {
     }
 
 
+
+    /*** Send HTTP Post Request to Attribution. ***/
     public static Response sendPost(JSONObject json, String path){
 
         String responseMessage = "";

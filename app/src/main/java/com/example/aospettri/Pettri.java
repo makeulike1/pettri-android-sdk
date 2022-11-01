@@ -22,6 +22,9 @@ public class Pettri {
 
     private static String CLICK_KEY    = "";
 
+
+
+
     /*** Initialize the Pettri SDK. ***/
     public static void init(String ck, String trkID, Context context){
 
@@ -131,6 +134,7 @@ public class Pettri {
 
 
 
+
     /*** Send Re-Installation Log to Attribution . ***/
     public static Response sendReInstall(Context context){
         String deviceId = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
@@ -141,12 +145,14 @@ public class Pettri {
         try {
             requestObject.put("trackingId",         TRACKING_ID);
             requestObject.put("deviceId",           deviceId);
+            requestObject.put("ck",                 CLICK_KEY);
         }catch(Exception e) {
             e.printStackTrace();
         }
 
         return RestApi.sendPost(requestObject, RestApi.createReInstallAPIPath);
     }
+
 
 
 
@@ -189,6 +195,7 @@ public class Pettri {
 
         return RestApi.sendPost(requestObject, RestApi.createEventAPIPath);
     }
+
 
 
 

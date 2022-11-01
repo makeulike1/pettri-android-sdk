@@ -39,7 +39,16 @@ public class SecondFragment extends Fragment {
             public void onClick(View view) {
 
                 JSONArray propList = new JSONArray();
-                Pettri.sendEvent("logout", propList);
+                Thread th = new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        Pettri.sendEvent("logout", propList);
+                    }
+                });
+
+                th.start();
+
                 LoginUser.userId = "";
 
                 NavHostFragment.findNavController(SecondFragment.this)

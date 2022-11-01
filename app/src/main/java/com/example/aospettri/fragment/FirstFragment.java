@@ -60,7 +60,17 @@ public class FirstFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            Pettri.sendEvent("login", propList);
+
+            Thread th = new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    Pettri.sendEvent("login", propList);
+                }
+
+            });
+
+            th.start();
 
             NavHostFragment.findNavController(FirstFragment.this)
                     .navigate(R.id.action_FirstFragment_to_SecondFragment);
