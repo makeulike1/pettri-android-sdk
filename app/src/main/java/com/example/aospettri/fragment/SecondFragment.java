@@ -9,11 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.aospettri.AppConfig;
 import com.example.aospettri.LoginUser;
 import com.example.aospettri.R;
 import com.example.aospettri.databinding.FragmentSecondBinding;
-import com.example.aospettri.thread.WriteEvent;
+import com.example.aospettri.Pettri;
 
 import org.json.JSONArray;
 
@@ -38,12 +37,10 @@ public class SecondFragment extends Fragment {
         binding.buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 JSONArray propList = new JSONArray();
-                WriteEvent thread = new WriteEvent(AppConfig.ck, "logout", LoginUser.userId, propList);
-                thread.start();
-
+                Pettri.sendEvent("logout", propList);
                 LoginUser.userId = "";
-
 
                 NavHostFragment.findNavController(SecondFragment.this)
                         .navigate(R.id.action_SecondFragment_to_FirstFragment);

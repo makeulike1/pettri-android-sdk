@@ -10,13 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.aospettri.AppConfig;
 import com.example.aospettri.R;
 import com.example.aospettri.databinding.FragmentThirdBinding;
-import com.example.aospettri.thread.WriteUser;
+import com.example.aospettri.Pettri;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ThirdFragment extends Fragment {
@@ -50,31 +48,39 @@ public class ThirdFragment extends Fragment {
             String email    = text2.getText().toString();
             String name     = text3.getText().toString();
 
-            try {
-                JSONArray propList = new JSONArray();
+            Thread th = new Thread(new Runnable() {
 
-                JSONObject prop1 = new JSONObject();
-                prop1.put("key", "email");
-                prop1.put("value", email);
+                    @Override
+                    public void run() {
+                        try {
 
-                JSONObject prop2 = new JSONObject();
-                prop2.put("key", "name");
-                prop2.put("value", name);
+                            JSONArray propList = new JSONArray();
+
+                            JSONObject prop1 = new JSONObject();
+                            prop1.put("key", "email");
+                            prop1.put("value", email);
+
+                            JSONObject prop2 = new JSONObject();
+                            prop2.put("key", "name");
+                            prop2.put("value", name);
+
+                            propList.put(prop1);
+                            propList.put(prop2);
 
 
-                propList.put(prop1);
-                propList.put(prop2);
+                            Pettri.createUser(userId, propList);
 
-                WriteUser thread = new WriteUser(AppConfig.ck, userId, propList);
-                thread.start();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
-                NavHostFragment.findNavController(ThirdFragment.this)
-                        .navigate(R.id.action_ThirdFragment_to_FourthFragment);
+                    }
+                });
 
-            }catch(JSONException e){
-                e.printStackTrace();
-            }
+            th.start();
 
+            NavHostFragment.findNavController(ThirdFragment.this)
+                    .navigate(R.id.action_ThirdFragment_to_FourthFragment);
 
         });
 

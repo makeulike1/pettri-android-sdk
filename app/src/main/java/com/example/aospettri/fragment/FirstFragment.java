@@ -10,12 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.aospettri.AppConfig;
 import com.example.aospettri.LoginUser;
 import com.example.aospettri.R;
 import com.example.aospettri.network.IPConfig;
 import com.example.aospettri.databinding.FragmentFirstBinding;
-import com.example.aospettri.thread.WriteEvent;
+import com.example.aospettri.Pettri;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +45,7 @@ public class FirstFragment extends Fragment {
             String userId = text.getText().toString();
 
             LoginUser.userId = userId;
+
             String ip = IPConfig.getIPAddress(true); // IPv4
             JSONArray propList = new JSONArray();
 
@@ -60,8 +60,7 @@ public class FirstFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            WriteEvent thread = new WriteEvent(AppConfig.ck, "login", userId, propList);
-            thread.start();
+            Pettri.sendEvent("login", propList);
 
             NavHostFragment.findNavController(FirstFragment.this)
                     .navigate(R.id.action_FirstFragment_to_SecondFragment);

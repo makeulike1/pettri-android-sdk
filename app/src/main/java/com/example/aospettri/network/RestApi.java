@@ -1,8 +1,7 @@
 package com.example.aospettri.network;
 
-import com.example.aospettri.AppConfig;
+import com.example.aospettri.network.object.Response;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -14,75 +13,63 @@ import java.net.URL;
 
 public class RestApi {
 
-    private static String serverURL                     = "http://test.adrunner.co.kr:8083";
+    public static String serverURL                     = "http://test.adrunner.co.kr:8083";
 
-    private static String createEventAPIPath            = "/event/create";
+    public static String createEventAPIPath            = "/event/create";
 
-    private static String createInstallAPIPath          = "/install/create";
+    public static String createInstallAPIPath          = "/install/create";
 
-    private static String createUserAPIPath             = "/user/create";
+    public static String createUserAPIPath             = "/user/create";
 
+    public static String createReInstallAPIPath        = "/re-install/create";
 
-    public static void callEventCreate(
-            String ck, String userId, String name, JSONArray propList){
-
-        JSONObject requestObject = new JSONObject();
-
-        try {
-            requestObject.put("ck", ck);
-            requestObject.put("trackingId",   AppConfig.trkId);
-            requestObject.put("userId",       userId);
-            requestObject.put("name",         name);
-            requestObject.put("prop",         propList);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
-        sendPost(requestObject, createEventAPIPath);
-    }
+    public static String checkReInstall                = "/re-install/check-rei";
 
 
+    public static Response sendGet(String path){
 
-
-    public static void callInstallCreate(String ck,  JSONArray propList){
-
-        JSONObject requestObject = new JSONObject();
+        String responseMessage = "";
 
         try {
-            requestObject.put("trackingId",     AppConfig.trkId);
-            requestObject.put("ck",             ck);
-            requestObject.put("prop",           propList);
+
+            HttpURLConnection conn;
+
+
+            URL url = new URL(serverURL + path);
+
+            System.out.println("Calling API : "+serverURL+path);
+
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-Type", "application/json");
+
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(100000);
+
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+
+            String line;
+
+            if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
+                return new Response(-1, "error.");
+
+            while ((line = reader.readLine()) != null)
+                responseMessage += line;
+
+            System.out.println("Response["+serverURL+path+"] : "+responseMessage);
+
+            conn.disconnect();
         }catch(Exception e){
             e.printStackTrace();
         }
 
-        sendPost(requestObject, createInstallAPIPath);
+        return new Response(200, responseMessage);
+
     }
 
 
-
-
-    public static void callUserCreate(String ck, String userId, JSONArray propList){
-
-        JSONObject requestObject = new JSONObject();
-
-
-        try{
-            requestObject.put("ck", ck);
-            requestObject.put("trackingId",     AppConfig.trkId);
-            requestObject.put("userId",         userId);
-            requestObject.put("prop",           propList);
-
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
-        sendPost(requestObject, createUserAPIPath);
-    }
-
-
-
-    public static Integer sendPost(JSONObject json, String path){
+    public static Response sendPost(JSONObject json, String path){
 
         String responseMessage = "";
 
@@ -92,7 +79,7 @@ public class RestApi {
 
             URL url = new URL(serverURL + path);
 
-            System.out.println("*** Calling API : "+serverURL+path);
+            System.out.println("Calling API : "+serverURL+path);
 
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
@@ -118,19 +105,19 @@ public class RestApi {
             String line;
 
             if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
-                return 0;
+                return new Response(-1, "error.");
 
             while ((line = reader.readLine()) != null)
                 responseMessage += line;
 
-            System.out.println("*** Response["+serverURL+path+"] : "+responseMessage);
+            System.out.println("Response["+serverURL+path+"] : "+responseMessage);
 
             conn.disconnect();
         }catch(Exception e){
             e.printStackTrace();
         }
 
-        return 200;
+        return new Response(200, responseMessage);
 
     }
 }

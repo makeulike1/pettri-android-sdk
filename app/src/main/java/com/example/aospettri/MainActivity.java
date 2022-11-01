@@ -2,20 +2,10 @@ package com.example.aospettri;
 
 import android.os.Bundle;
 
-import com.example.aospettri.network.IPConfig;
-import com.example.aospettri.room.AppDatabase;
-import com.example.aospettri.room.Appdata;
-import com.example.aospettri.room.AppdataDao;
-import com.example.aospettri.settings.Pettri;
-import com.example.aospettri.thread.WriteInstall;
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.View;
 import android.content.Intent;
 
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -23,14 +13,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.aospettri.databinding.ActivityMainBinding;
 
-import androidx.room.Room;
-
 import android.view.Menu;
 import android.view.MenuItem;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
